@@ -1,7 +1,7 @@
 
 # Project requrements
 ## Glossary
-[Vk](http://vk.com) — Социальная сеть
+[ВК](http://vk.com) — Социальная сеть
 
 [OSU!](https://osu.ppy.sh/home) — Бесплатная музыкальная ритм-игра
 
