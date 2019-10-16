@@ -1,18 +1,18 @@
 
-# Project requrements
-## Glossary
+# Требования к проекту
+## Глоссарий
 [ВК](http://vk.com) — Социальная сеть
 
 [OSU!](https://osu.ppy.sh/home) — Бесплатная музыкальная ритм-игра
 
 Битмап — Игровые уровни в OSU!
-## 1 Introduction
+## 1 Вступление
 
 ВК OSU! бот. Данный бот будет помогать позлователям следить за своим прогрессом в OSU!, а также предостовалять информацию о новых битмапах.
-# 2 User requirements
-## 2.1 Programming interface
-[VK api](https://pypi.org/project/vk-api/), [urllib](https://docs.python.org/3/library/urllib.html#module-urllib) and [jsonlib](https://docs.python.org/3/library/json.html?highlight=json#module-json) библиотеки будут использованы для реализации бота. Code will be written in Python 3.6.
-## 2.2 User interface
+# 2 Требования пользователя
+## 2.1 Программные интерфейсы
+[VK api](https://pypi.org/project/vk-api/), [urllib](https://docs.python.org/3/library/urllib.html#module-urllib) and [jsonlib](https://docs.python.org/3/library/json.html?highlight=json#module-json) библиотеки будут использованы для реализации бота. Код будет написан на Python 3.6.
+## 2.2 Интерфейс пользователя
 Text and graphical interface. 
 
 Dialog with VK bot.
@@ -23,24 +23,23 @@ Recommended friends
 
 Recommended music
 ![GitHub Logo](/Mockups/music.png)
-## 2.3 Users characteristics
+## 2.3 Характеристики пользователей
 Люди, используещие ВК и желающие получать актуальную информация о своем прогрессе и новых битмапах.
-## 2.4 Dependencies
-Люди которые хотят использовать данного бота
-Доступ к интернету, браузер, доступ к ВК и ВК аккаунту.
-# 3 System requirements
-## 3.1 Functional requirements
+## 2.4 Зависимости
+Для работы с ботом необходимо подключение к интернету, браузер, аккаунт ВКонтакте.
+# 3 Системные требования
+## 3.1 Функциональные требования
 Данный бот будет предоставлять:
 1. Информацию о прогрессе за день/неделю/месяц
 2. Советы 
 3. Информацию о новых битмапах
 
-Пользователь может указать предпочтения к жанрам/сложности/виду битмапов
-## 3.2 Non-functional requirements
-**3.2.1 Quality attributes**
+Пользователь может указать предпочтения к жанрам/сложности битмапов
+## 3.2 Нефункциональные требования
+**3.2.1 Атрибуты качества**
 
-Conduct a focus group, ask if its participants are statisfied with given recommendations or not. Percentage of statisfied people is a way to estimate precision of recommendation algorithms.
+Опросить пользователей о полезности предоставляемой ботом информации. Собрать данные о стабильности работы бота. На основе отзывов и данных о работе бота, сделать вывод о качестве решения.
 
-# 4 Analogs
+# 4 Аналоги
 1. [den0bot - osu!-related telegram chat bot](http://kikoe.ru/)
 2. [OSU Telegram bot](https://t.me/osuibot)
