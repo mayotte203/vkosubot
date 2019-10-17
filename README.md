@@ -11,9 +11,9 @@
 ВК OSU! бот. Данный бот будет помогать позлователям следить за своим прогрессом в OSU!, а также предостовалять информацию о новых битмапах.
 # 2 Требования пользователя
 ## 2.1 Программные интерфейсы
-[VK api](https://pypi.org/project/vk-api/), [urllib](https://docs.python.org/3/library/urllib.html#module-urllib) and [jsonlib](https://docs.python.org/3/library/json.html?highlight=json#module-json) библиотеки будут использованы для реализации бота. Код будет написан на Python 3.6.
+[VK api](https://pypi.org/project/vk-api/), [urllib](https://docs.python.org/3/library/urllib.html#module-urllib) and [jsonlib](https://docs.python.org/3/library/json.html?highlight=json#module-json) библиотеки будут использованы для реализации бота. Код будет написан на Python3.
 ## 2.2 Интерфейс пользователя
-Текстовый и графический интерфейс. 
+## Текстовый и графический интерфейс. 
 
 Диалог с ботом.
 
