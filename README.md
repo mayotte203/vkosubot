@@ -13,16 +13,16 @@
 ## 2.1 Программные интерфейсы
 [VK api](https://pypi.org/project/vk-api/), [urllib](https://docs.python.org/3/library/urllib.html#module-urllib) and [jsonlib](https://docs.python.org/3/library/json.html?highlight=json#module-json) библиотеки будут использованы для реализации бота. Код будет написан на Python 3.6.
 ## 2.2 Интерфейс пользователя
-Text and graphical interface. 
+Текстовый и графический интерфейс. 
 
-Dialog with VK bot.
-![GitHub Logo](/Mockups/UI.png)
+Диалог с ботом.
+![GitHub Logo](/mockups/UI.png)
 
-Recommended friends
-![GitHub Logo](/Mockups/friends.png)
+Предоставление статистики
+![GitHub Logo](/mockups/statistic.png)
 
-Recommended music
-![GitHub Logo](/Mockups/music.png)
+Подборка битмапов
+![GitHub Logo](/mockups/beatmaps.png)
 ## 2.3 Характеристики пользователей
 Люди, используещие ВК и желающие получать актуальную информация о своем прогрессе и новых битмапах.
 ## 2.4 Зависимости
