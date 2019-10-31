@@ -7,7 +7,7 @@
 <a name="1"/>
 
 # 1. Уведомление о прогрессе пользователя
-![Диаграмма активностей 1](/diagrams/images/Sequence12.jpg)
+![Диаграмма активностей 1](/diagrams/images/Sequence123.jpg)
 
 <a name="2"/>
 
