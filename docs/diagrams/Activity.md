@@ -7,9 +7,9 @@
 <a name="1"/>
 
 # 1.Указание имени аккаунта OSU!пользователя 
-![Диаграмма активностей 1](/diagrams/images/Activity1.jpg)
+![Диаграмма активностей 1](/docs/diagrams/images/Activity1.jpg)
 
 <a name="2"/>
 
 # 2. Уведомление о прогрессе пользователя
-![Диаграмма активностей 2](/diagrams/images/Activity2.jpg)
+![Диаграмма активностей 2](/docs/diagrams/images/Activity2.jpg)

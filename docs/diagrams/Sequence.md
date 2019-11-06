@@ -7,9 +7,9 @@
 <a name="1"/>
 
 # 1. Уведомление о прогрессе пользователя
-![Диаграмма активностей 1](/diagrams/images/Sequence123.jpg)
+![Диаграмма активностей 1](/docs/diagrams/images/Sequence1.jpg)
 
 <a name="2"/>
 
 # 2. Настройка бота
-![Диаграмма активностей 2](/diagrams/images/Sequence2.jpg)
+![Диаграмма активностей 2](/docs/diagrams/images/Sequence2.jpg)

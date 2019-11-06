@@ -17,15 +17,15 @@
 
 Диалог с ботом.
 
-![GitHub Logo](/mockups/UI.png)
+![GitHub Logo](/docs//mockups/UI.png)
 
 Предоставление статистики.
 
-![GitHub Logo](/mockups/statistic.png)
+![GitHub Logo](/docs/mockups/statistic.png)
 
 Подборка битмапов.
 
-![GitHub Logo](/mockups/beatmaps.png)
+![GitHub Logo](/docs/mockups/beatmaps.png)
 ## 2.3 Характеристики пользователей
 Люди, используещие ВК и играющие в OSU! или желающие получать актуальную информация о своем прогрессе в OSU! и новых битмапах.
 ## 2.4 Зависимости
