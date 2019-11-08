@@ -1,0 +1,26 @@
+{
+    "one_time": true,
+    "buttons": [
+        [{
+            "action": {
+                "type": "text",
+                "label": "Статистика",
+                "payload": "{\"button\": \"statistic\"}"
+            }
+        }],
+        [{
+            "action": {
+                "type": "text",
+                "label": "Битмапы",
+                "payload": "{\"button\": \"beatmaps\"}"
+            }
+        }],
+        [{
+            "action": {
+                "type": "text",
+                "label": "Найстройки",
+                "payload": "{\"button\": \"settings\"}"
+            }
+        }]
+    ]
+}
