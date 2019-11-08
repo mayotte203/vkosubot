@@ -4,21 +4,21 @@
         [{
             "action": {
                 "type": "text",
-                "label": "РЎС‚Р°С‚РёСЃС‚РёРєР°",
+                "label": "Статистика",
                 "payload": "{\"button\": \"statistic\"}"
             }
         }],
         [{
             "action": {
                 "type": "text",
-                "label": "Р‘РёС‚РјР°РїС‹",
+                "label": "Битмапы",
                 "payload": "{\"button\": \"beatmaps\"}"
             }
         }],
         [{
             "action": {
                 "type": "text",
-                "label": "РќР°Р№СЃС‚СЂРѕР№РєРё",
+                "label": "Найстройки",
                 "payload": "{\"button\": \"settings\"}"
             }
         }]
