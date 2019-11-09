@@ -14,12 +14,12 @@ class OSUApi:
         account = OSUAccount()
         if(len(parsed_data)):
             account.user_id = parsed_data[0]["user_id"]
-            account.username = parsed_data[0]["username"]
-            account.playcount = parsed_data[0]["playcount"]
-            account.ranked_score = parsed_data[0]["ranked_score"]
-            account.total_score = parsed_data[0]["total_score"]
-            account.pp_raw = parsed_data[0]["pp_raw"]
-            account.pp_rank = parsed_data[0]["pp_rank"]
-            account.accuracy = parsed_data[0]["accuracy"]
+            account.username = str(parsed_data[0]["username"])
+            account.playcount = int(parsed_data[0]["playcount"])
+            account.ranked_score = int(parsed_data[0]["ranked_score"])
+            account.total_score = int(parsed_data[0]["total_score"])
+            account.pp_raw = round(float(parsed_data[0]["pp_raw"]), 2)
+            account.pp_rank = int(parsed_data[0]["pp_rank"])
+            account.accuracy = round(float(parsed_data[0]["accuracy"]), 2)
         return account
 
