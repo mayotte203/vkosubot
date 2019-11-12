@@ -1,5 +1,5 @@
 {
-    "one_time": true,
+    "one_time": false,
     "buttons": [
         [{
             "action": {
@@ -18,7 +18,7 @@
         [{
             "action": {
                 "type": "text",
-                "label": "Найстройки",
+                "label": "Настройка",
                 "payload": "{\"button\": \"settings\"}"
             }
         }]
