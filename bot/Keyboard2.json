@@ -1,0 +1,33 @@
+{
+    "one_time": false,
+    "buttons": [
+        [{
+            "action": {
+                "type": "text",
+                "label": "Отключить уведомления",
+                "payload": "{\"button\": \"disable\"}"
+            }
+        }],
+        [{
+            "action": {
+                "type": "text",
+                "label": "Уведомления раз в день",
+                "payload": "{\"button\": \"daily\"}"
+            }
+        }],
+        [{
+            "action": {
+                "type": "text",
+                "label": "Уведомления раз в неделю",
+                "payload": "{\"button\": \"weekly\"}"
+            }
+        }],
+        [{
+            "action": {
+                "type": "text",
+                "label": "Выход",
+                "payload": "{\"button\": \"exit\"}"
+            }
+        }]
+    ]
+}

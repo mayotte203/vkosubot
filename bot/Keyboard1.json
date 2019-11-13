@@ -1,0 +1,33 @@
+{
+    "one_time": false,
+    "buttons": [
+        [{
+            "action": {
+                "type": "text",
+                "label": "Настройка уведомлений",
+                "payload": "{\"button\": \"notifications\"}"
+            }
+        }],
+        [{
+            "action": {
+                "type": "text",
+                "label": "Настройка жанров",
+                "payload": "{\"button\": \"genres\"}"
+            }
+        }],
+        [{
+            "action": {
+                "type": "text",
+                "label": "Настройка языков",
+                "payload": "{\"button\": \"languages\"}"
+            }
+        }],
+        [{
+            "action": {
+                "type": "text",
+                "label": "Выход",
+                "payload": "{\"button\": \"exit\"}"
+            }
+        }]
+    ]
+}

@@ -2,5 +2,8 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/bot/Keyboard0.json" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/bot/Keyboard1.json" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/bot/Keyboard2.json" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/bot/KeyboardNull.json" charset="windows-1251" />
   </component>
 </project>
