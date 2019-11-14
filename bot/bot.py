@@ -22,8 +22,15 @@ class bot:
         vk_longpoll = VkLongPoll(vk_session, wait=25)
         self.vk = vk_session.get_api()
         self.osu_api = OSUApi(token)
+        self.notifications_status = 0
         while True:
-            # вот тут будем время для уведовмлений чекать
+            if datetime.datetime.now().hour == 17 and datetime.datetime.now().minute == 0 and self.notifications_status == 0:
+                self.notifications_status = 1
+                for user_id, preferences in self.d_vk_preferences.items():
+                    if preferences.notifications == 'daily' or (preferences.notifications == 'weekly' and datetime.datetime.now().weekday == 0):
+                        self.send_statistic(user_id)
+            else:
+                self.notifications_status = 0
             for event in vk_longpoll.check():
                 if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
                     if event.from_user:
