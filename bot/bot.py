@@ -204,7 +204,7 @@ class bot:
                                 )
                             elif self.d_vk_state[event.user_id] == 'languages':
                                 languages_dict = {'1': [2], '2': [3], '3': [4], '4': [6], '5': [5],
-                                                  '6': [0, 7, 8, 9, 10, 11]}
+                                                  '6': [0, 1, 7, 8, 9, 10, 11]}
                                 languages = re.findall(r'\d+', event.text)
                                 languages_list = list()
                                 for language in languages:
