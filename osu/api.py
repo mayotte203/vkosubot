@@ -28,7 +28,7 @@ class OSUApi:
         request = "https://osu.ppy.sh/api/get_beatmaps?k=" + self.token + "&limit=10&m=0"
         beatmaps_data = urllib.request.urlopen(request)
         parsed_data = json.loads(beatmaps_data.read())
-        beatmaps_list = list()
+        beatmaps_list = []
         for data in parsed_data:
             if len(list(filter(lambda x: x.set_id == int(data["beatmapset_id"]), beatmaps_list))) == 0:
                 beatmaps_list.append(OSUBeatmap(

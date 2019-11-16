@@ -1,5 +1,5 @@
 class OSUBeatmap:
-    def __init__(self, set_id=0, map_id=0, artist="", title="", creator="", genre=0, language=0, difficulty=dict()):
+    def __init__(self, set_id=0, map_id=0, artist="", title="", creator="", genre=0, language=0, difficulty={}):
         self.set_id = set_id
         self.map_id = map_id
         self.artist = artist

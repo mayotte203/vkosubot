@@ -295,7 +295,7 @@ class bot:
         genres_dict = {'1': [2], '2': [3], '3': [4], '4': [5], '5': [9], '6': [10],
                        '7': [0, 1, 6, 7, 8]}
         genres = re.findall(r'\d+', event.text)
-        genres_list = list()
+        genres_list = []
         for genre in genres:
             if genres_dict.get(genre) is not None:
                 genres_list.extend(genres_dict[genre])
@@ -312,7 +312,7 @@ class bot:
         languages_dict = {'1': [2], '2': [3], '3': [4], '4': [6], '5': [5],
                           '6': [0, 1, 7, 8, 9, 10, 11]}
         languages = re.findall(r'\d+', event.text)
-        languages_list = list()
+        languages_list = []
         for language in languages:
             if languages_dict.get(language) is not None:
                 languages_list.extend(languages_dict[language])
