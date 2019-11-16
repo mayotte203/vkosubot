@@ -3,8 +3,9 @@ import re
 from vk_api.longpoll import VkLongPoll, VkEventType
 import random
 import datetime
+from osu.account import OSUAccount
 from osu.api import OSUApi
-
+import json
 
 class bot:
     def __init__(self, token):
@@ -13,9 +14,10 @@ class bot:
         self.keyboard0_json = open("bot/Keyboard0.json", "r").read()
         self.keyboard1_json = open("bot/Keyboard1.json", "r").read()
         self.keyboard2_json = open("bot/Keyboard2.json", "r").read()
-        self.d_vk_osu_accounts = dict()
-        self.d_vk_preferences = dict()
-        self.d_vk_state = dict()
+        self.d_vk_preferences = {}
+        self.d_vk_state = {}
+        self.d_vk_osu_accounts = {}
+        self.load_users()
 
     def run(self, token):
         vk_session = vk_api.VkApi(token=self.token)
@@ -24,6 +26,7 @@ class bot:
         self.osu_api = OSUApi(token)
         self.notifications_status = 0
         while True:
+            self.save_users()
             if datetime.datetime.now().hour == 17 and datetime.datetime.now().minute == 0 and self.notifications_status == 0:
                 self.notifications_status = 1
                 for user_id, preferences in self.d_vk_preferences.items():
@@ -301,3 +304,71 @@ class bot:
         notifications = 0
         genres = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         languages = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+    def save_users(self):
+        with open('users_accounts.json', 'w') as file:
+            try:
+                users_accounts = {}
+                for user_id, user_account in self.d_vk_osu_accounts.items():
+                    users_accounts[user_id] = {}
+                    users_accounts[user_id]['user_id'] = user_account.user_id
+                    users_accounts[user_id]['username'] = user_account.username
+                    users_accounts[user_id]['playcount'] = user_account.playcount
+                    users_accounts[user_id]['ranked_score'] = user_account.ranked_score
+                    users_accounts[user_id]['total_score'] = user_account.total_score
+                    users_accounts[user_id]['pp_rank'] = user_account.pp_rank
+                    users_accounts[user_id]['pp_raw'] = user_account.pp_raw
+                    users_accounts[user_id]['accuracy'] = user_account.accuracy
+                file.write(json.dumps(users_accounts))
+            except Exception:
+                pass
+        with open('users_preferences.json', 'w') as file:
+            try:
+                users_preferences = {}
+                for user_id, user_preferences in self.d_vk_preferences.items():
+                    users_preferences[user_id] = {}
+                    users_preferences[user_id]['notifications'] = user_preferences.notifications
+                    users_preferences[user_id]['genres'] = user_preferences.genres
+                    users_preferences[user_id]['languages'] = user_preferences.languages
+                file.write(json.dumps(users_preferences))
+            except Exception:
+                pass
+
+    def load_users(self):
+        try:
+            with open('users_accounts.json', 'r') as file:
+                try:
+                    users_accounts = json.loads(file.read())
+                    self.d_vk_osu_accounts = {}
+                    self.d_vk_state = {}
+                    for user_id, user_account in users_accounts.items():
+                        user_id = int(user_id)
+                        self.d_vk_osu_accounts[user_id] = OSUAccount()
+                        self.d_vk_osu_accounts[user_id].user_id = user_account['user_id']
+                        self.d_vk_osu_accounts[user_id].username = str(user_account['username'])
+                        self.d_vk_osu_accounts[user_id].playcount = int(user_account['playcount'])
+                        self.d_vk_osu_accounts[user_id].ranked_score = int(user_account['ranked_score'])
+                        self.d_vk_osu_accounts[user_id].total_score = int(user_account['total_score'])
+                        self.d_vk_osu_accounts[user_id].pp_rank = int(user_account['pp_rank'])
+                        self.d_vk_osu_accounts[user_id].pp_raw = float(user_account['pp_raw'])
+                        self.d_vk_osu_accounts[user_id].accuracy = float(user_account['accuracy'])
+                        self.d_vk_state[user_id] = 'menu'
+                except Exception:
+                    self.d_vk_osu_accounts = {}
+        except FileNotFoundError:
+            self.d_vk_osu_accounts = {}
+        try:
+            with open('users_preferences.json', 'r') as file:
+                try:
+                    users_preferences = json.loads(file.read())
+                    self.d_vk_preferences = {}
+                    for user_id, user_preferences in users_preferences.items():
+                        user_id = int(user_id)
+                        self.d_vk_preferences[user_id] = self.userPreferences()
+                        self.d_vk_preferences[user_id].notifications = int(user_preferences['notifications'])
+                        self.d_vk_preferences[user_id].genres = user_preferences['genres']
+                        self.d_vk_preferences[user_id].languages = user_preferences['languages']
+                except Exception:
+                    self.d_vk_preferences = {}
+        except FileNotFoundError:
+            self.d_vk_preferences = {}
