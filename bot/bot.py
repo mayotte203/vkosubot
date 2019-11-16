@@ -7,7 +7,21 @@ from osu.account import OSUAccount
 from osu.api import OSUApi
 import json
 
+
 class bot:
+    class State:
+        MENU_STATE = 1
+        SETTINGS_STATE = 2
+        NOTIFICATIONS_STATE = 3
+        GENRES_STATE = 4
+        LANGUAGES_STATE = 5
+        NEW_USER_STATE = 0
+
+    class Notifications:
+        DISABLED = 0
+        DAILY = 1
+        WEEKLY = 2
+
     def __init__(self, token):
         self.token = token
         self.keyboard_null_json = open("bot/KeyboardNuLL.json", "r").read()
@@ -18,221 +32,25 @@ class bot:
         self.d_vk_state = {}
         self.d_vk_osu_accounts = {}
         self.load_users()
+        self.d_state_function = {self.State.MENU_STATE: self.menu,
+                                 self.State.SETTINGS_STATE: self.settings,
+                                 self.State.NOTIFICATIONS_STATE: self.notifications,
+                                 self.State.LANGUAGES_STATE: self.languages,
+                                 self.State.GENRES_STATE: self.genres,
+                                 self.State.NEW_USER_STATE: self.new_user}
+        self.notifications_status = 0
 
     def run(self, token):
         vk_session = vk_api.VkApi(token=self.token)
         vk_longpoll = VkLongPoll(vk_session, wait=25)
         self.vk = vk_session.get_api()
         self.osu_api = OSUApi(token)
-        self.notifications_status = 0
         while True:
             self.save_users()
-            if datetime.datetime.now().hour == 17 and datetime.datetime.now().minute == 0 and self.notifications_status == 0:
-                self.notifications_status = 1
-                for user_id, preferences in self.d_vk_preferences.items():
-                    if preferences.notifications == 'daily' or (preferences.notifications == 'weekly' and datetime.datetime.now().weekday == 0):
-                        self.send_statistic(user_id)
-            else:
-                self.notifications_status = 0
+            self.check_notifications()
             for event in vk_longpoll.check():
-                if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-                    if event.from_user:
-                        if self.d_vk_osu_accounts.get(event.user_id) is None:
-                            if self.osu_api.get_osu_account(event.text).user_id:
-                                self.vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Ваш ник - " + self.osu_api.get_osu_account(event.text).username,
-                                    random_id=random.getrandbits(64),
-                                )
-                                self.d_vk_osu_accounts[event.user_id] = self.osu_api.get_osu_account(event.text)
-                                self.d_vk_preferences[event.user_id] = self.userPreferences()
-                                self.d_vk_state[event.user_id] = 'menu'
-                                self.vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Выберите одну из категорий ниже",
-                                    random_id=random.getrandbits(64),
-                                    keyboard=self.keyboard0_json
-                                )
-                            else:
-                                self.vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Ваш аккаунт не найден, введите свой ник",
-                                    random_id=random.getrandbits(64)
-                                )
-                        else:
-                            if self.d_vk_state[event.user_id] == 'menu':
-                                if str(event.text).lower() == 'статистика':
-                                    self.send_statistic(event.user_id)
-                                elif str(event.text).lower() == 'битмапы':
-                                    self.send_beatmaps(event.user_id)
-                                elif str(event.text).lower() == 'настройка':
-                                    self.d_vk_state[event.user_id] = 'settings'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите одну из категорий ниже",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard1_json
-                                    )
-                                else:
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите одну из категорий ниже",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard0_json
-                                    )
-                            elif self.d_vk_state[event.user_id] == 'settings':
-                                if str(event.text).lower() == 'настройка уведомлений':
-                                    self.d_vk_state[event.user_id] = 'notifications'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите нужный вариант",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard2_json
-                                    )
-                                elif str(event.text).lower() == 'настройка жанров':
-                                    self.d_vk_state[event.user_id] = 'genres'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message=("Введите номера необходимых жанров:\n"
-                                                 + "1. Видеоигры\n"
-                                                 + "2. Аниме\n"
-                                                 + "3. Рок\n"
-                                                 + "4. Поп\n"
-                                                 + "5. Хип-Хоп\n"
-                                                 + "6. Электроника\n"
-                                                 + "7. Другие"),
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard_null_json
-                                    )
-                                elif str(event.text).lower() == 'настройка языков':
-                                    self.d_vk_state[event.user_id] = 'languages'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message=("Введите номера необходимых жанров:\n"
-                                                 + "1. Английский\n"
-                                                 + "2. Японский\n"
-                                                 + "3. Китайский\n"
-                                                 + "4. Корейский\n"
-                                                 + "5. Инструментал\n"
-                                                 + "6. Другие"),
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard_null_json
-                                    )
-                                elif str(event.text).lower() == 'выход':
-                                    self.d_vk_state[event.user_id] = 'menu'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите одну из категорий ниже",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard0_json
-                                    )
-                                else:
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите одну из категорий ниже",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard1_json
-                                    )
-                            elif self.d_vk_state[event.user_id] == 'notifications':
-                                if str(event.text).lower() == 'отключить уведомления':
-                                    self.d_vk_preferences[event.user_id].notifications = 'disable'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Настройки сохранены",
-                                        random_id=random.getrandbits(64)
-                                    )
-                                    self.d_vk_state[event.user_id] = 'menu'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите одну из категорий ниже",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard0_json
-                                    )
-                                elif str(event.text).lower() == 'уведомления раз в день':
-                                    self.d_vk_preferences[event.user_id].notifications = 'daily'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Настройки сохранены",
-                                        random_id=random.getrandbits(64)
-                                    )
-                                    self.d_vk_state[event.user_id] = 'menu'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите одну из категорий ниже",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard0_json
-                                    )
-                                elif str(event.text).lower() == 'уведомления раз в неделю':
-                                    self.d_vk_preferences[event.user_id].notifications = 'weekly'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Настройки сохранены",
-                                        random_id=random.getrandbits(64)
-                                    )
-                                    self.d_vk_state[event.user_id] = 'menu'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите одну из категорий ниже",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard0_json
-                                    )
-                                elif str(event.text).lower() == 'выход':
-                                    self.d_vk_state[event.user_id] = 'menu'
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите одну из категорий ниже",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard0_json
-                                    )
-                                else:
-                                    self.vk.messages.send(
-                                        user_id=event.user_id,
-                                        message="Выберите одну из категорий ниже",
-                                        random_id=random.getrandbits(64),
-                                        keyboard=self.keyboard2_json
-                                    )
-                            elif self.d_vk_state[event.user_id] == 'genres':
-                                genres_dict = {'1': [2], '2': [3], '3': [4], '4': [5], '5': [9], '6': [10],
-                                               '7': [0, 1, 6, 7, 8]}
-                                genres = re.findall(r'\d+', event.text)
-                                genres_list = list()
-                                for genre in genres:
-                                    if genres_dict.get(genre) is not None:
-                                        genres_list.extend(genres_dict[genre])
-                                self.d_vk_preferences[event.user_id].genres = genres_list
-                                self.d_vk_state[event.user_id] = 'menu'
-                                self.vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Настройки сохранены",
-                                    random_id=random.getrandbits(64)
-                                )
-                                self.vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Выберите одну из категорий ниже",
-                                    random_id=random.getrandbits(64),
-                                    keyboard=self.keyboard0_json
-                                )
-                            elif self.d_vk_state[event.user_id] == 'languages':
-                                languages_dict = {'1': [2], '2': [3], '3': [4], '4': [6], '5': [5],
-                                                  '6': [0, 1, 7, 8, 9, 10, 11]}
-                                languages = re.findall(r'\d+', event.text)
-                                languages_list = list()
-                                for language in languages:
-                                    if languages_dict.get(language) is not None:
-                                        languages_list.extend(languages_dict[language])
-                                self.d_vk_preferences[event.user_id].languages = languages_list
-                                self.d_vk_state[event.user_id] = 'menu'
-                                self.vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Настройки сохранены",
-                                    random_id=random.getrandbits(64)
-                                )
-                                self.vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Выберите одну из категорий ниже",
-                                    random_id=random.getrandbits(64),
-                                    keyboard=self.keyboard0_json
-                                )
+                if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text and event.from_user:
+                    self.d_state_function[self.d_vk_state.get(event.user_id, self.State.NEW_USER_STATE)](event)
 
     def statistic_presenter(self, user_account_old, user_account_new):
         result = ""
@@ -352,7 +170,7 @@ class bot:
                         self.d_vk_osu_accounts[user_id].pp_rank = int(user_account['pp_rank'])
                         self.d_vk_osu_accounts[user_id].pp_raw = float(user_account['pp_raw'])
                         self.d_vk_osu_accounts[user_id].accuracy = float(user_account['accuracy'])
-                        self.d_vk_state[user_id] = 'menu'
+                        self.d_vk_state[user_id] = self.State.MENU_STATE
                 except Exception:
                     self.d_vk_osu_accounts = {}
         except FileNotFoundError:
@@ -372,3 +190,168 @@ class bot:
                     self.d_vk_preferences = {}
         except FileNotFoundError:
             self.d_vk_preferences = {}
+
+    def navigate(self, user_id, state):
+        self.d_vk_state[user_id] = state
+        d_state_message = {self.State.MENU_STATE: 'Выберите одну из категорий ниже',
+                           self.State.SETTINGS_STATE: 'Выберите одну из категорий ниже',
+                           self.State.NOTIFICATIONS_STATE: 'Выберите нужный вариант',
+                           self.State.GENRES_STATE: "Введите номера необходимых жанров:\n"
+                                                    + "1. Видеоигры\n"
+                                                    + "2. Аниме\n"
+                                                    + "3. Рок\n"
+                                                    + "4. Поп\n"
+                                                    + "5. Хип-Хоп\n"
+                                                    + "6. Электроника\n"
+                                                    + "7. Другие",
+                           self.State.LANGUAGES_STATE: "Введите номера необходимых языков:\n"
+                                                       + "1. Английский\n"
+                                                       + "2. Японский\n"
+                                                       + "3. Китайский\n"
+                                                       + "4. Корейский\n"
+                                                       + "5. Инструментал\n"
+                                                       + "6. Другие"}
+        d_state_keyboard = {self.State.MENU_STATE: self.keyboard0_json,
+                            self.State.SETTINGS_STATE: self.keyboard1_json,
+                            self.State.NOTIFICATIONS_STATE: self.keyboard2_json,
+                            self.State.LANGUAGES_STATE: self.keyboard_null_json,
+                            self.State.GENRES_STATE: self.keyboard_null_json}
+        self.vk.messages.send(
+            user_id=user_id,
+            message=d_state_message[state],
+            random_id=random.getrandbits(64),
+            keyboard=d_state_keyboard[state]
+        )
+
+    def menu(self, event):
+        def settings():
+            self.navigate(event.user_id, self.State.SETTINGS_STATE)
+
+        def retry():
+            self.navigate(event.user_id, self.State.SETTINGS_STATE)
+
+        def send_statistic():
+            self.send_statistic(event.user_id)
+
+        def send_beatmap():
+            self.send_beatmaps(event.user_id)
+
+        d_message_function = {'статистика': send_statistic,
+                              'битмапы': send_beatmap,
+                              'настройка': settings}
+
+        d_message_function.get(str(event.text).lower(), retry)()
+
+    def settings(self, event):
+        def setup_notifications():
+            self.navigate(event.user_id, self.State.NOTIFICATIONS_STATE)
+
+        def setup_genres():
+            self.navigate(event.user_id, self.State.GENRES_STATE)
+
+        def setup_languages():
+            self.navigate(event.user_id, self.State.LANGUAGES_STATE)
+
+        def exit():
+            self.navigate(event.user_id, self.State.MENU_STATE)
+
+        def retry():
+            self.navigate(event.user_id, self.State.SETTINGS_STATE)
+
+        d_message_function = {'настройка уведомлений': setup_notifications,
+                              'настройка жанров': setup_genres,
+                              'настройка языков': setup_languages,
+                              'выход': exit}
+
+        d_message_function.get(str(event.text).lower(), retry)()
+
+    def notifications(self, event):
+        def set_notifications():
+            d_message_notifications = {'отключить уведомления': self.Notifications.DISABLED,
+                                       'уведомления раз в день': self.Notifications.DAILY,
+                                       'уведомления раз в неделю': self.Notifications.WEEKLY}
+            self.d_vk_preferences[event.user_id].notifications = d_message_notifications[str(event.text).lower()]
+            self.vk.messages.send(
+                user_id=event.user_id,
+                message="Настройки сохранены",
+                random_id=random.getrandbits(64)
+            )
+            self.navigate(event.user_id, self.State.MENU_STATE)
+
+        def exit():
+            self.navigate(event.user_id, self.State.MENU_STATE)
+
+        def retry():
+            self.navigate(event.user_id, self.State.NOTIFICATIONS_STATE)
+
+        d_notifications_functions = {'отключить уведомления': set_notifications,
+                                     'уведомления раз в день': set_notifications,
+                                     'уведомления раз в неделю': set_notifications,
+                                     'выход': exit}
+
+        d_notifications_functions.get(str(event.text).lower(), retry)()
+
+    def genres(self, event):
+        genres_dict = {'1': [2], '2': [3], '3': [4], '4': [5], '5': [9], '6': [10],
+                       '7': [0, 1, 6, 7, 8]}
+        genres = re.findall(r'\d+', event.text)
+        genres_list = list()
+        for genre in genres:
+            if genres_dict.get(genre) is not None:
+                genres_list.extend(genres_dict[genre])
+        self.d_vk_preferences[event.user_id].genres = genres_list
+        self.d_vk_state[event.user_id] = self.State.MENU_STATE
+        self.vk.messages.send(
+            user_id=event.user_id,
+            message="Настройки сохранены",
+            random_id=random.getrandbits(64)
+        )
+        self.navigate(event.user_id, self.State.MENU_STATE)
+
+    def languages(self, event):
+        languages_dict = {'1': [2], '2': [3], '3': [4], '4': [6], '5': [5],
+                          '6': [0, 1, 7, 8, 9, 10, 11]}
+        languages = re.findall(r'\d+', event.text)
+        languages_list = list()
+        for language in languages:
+            if languages_dict.get(language) is not None:
+                languages_list.extend(languages_dict[language])
+        self.d_vk_preferences[event.user_id].languages = languages_list
+        self.d_vk_state[event.user_id] = self.State.MENU_STATE
+        self.vk.messages.send(
+            user_id=event.user_id,
+            message="Настройки сохранены",
+            random_id=random.getrandbits(64)
+        )
+        self.navigate(event.user_id, self.State.MENU_STATE)
+
+    def new_user(self, event):
+        if self.osu_api.get_osu_account(event.text).event.user_id:
+            self.vk.messages.send(
+                user_id=event.user_id,
+                message="Ваш ник - " + self.osu_api.get_osu_account(event.text).username,
+                random_id=random.getrandbits(64),
+            )
+            self.d_vk_osu_accounts[event.user_id] = self.osu_api.get_osu_account(event.text)
+            self.d_vk_preferences[event.user_id] = self.userPreferences()
+            self.d_vk_state[event.user_id] = self.State.MENU_STATE
+            self.navigate(event.user_id, self.State.MENU_STATE)
+        else:
+            self.vk.messages.send(
+                user_id=event.user_id,
+                message="Ваш аккаунт не найден, введите свой ник",
+                random_id=random.getrandbits(64)
+            )
+
+    def check_notifications(self):
+        if (datetime.datetime.now().hour == 17
+                and datetime.datetime.now().minute == 0
+                and self.notifications_status == 0):
+            self.notifications_status = 1
+            for user_id, preferences in self.d_vk_preferences.items():
+                if preferences.notifications == self.Notifications.DAILY \
+                        or (preferences.notifications == self.Notifications.WEEKLY
+                            and datetime.datetime.now().weekday == 0):
+                    self.send_statistic(user_id)
+        else:
+            self.notifications_status = 0
