@@ -39,18 +39,22 @@ class bot:
         vk_longpoll = VkLongPoll(vk_session, wait=25)
         self.vk = vk_session.get_api()
         self.osu_api = OSUApi(token)
+        while True:
+            self.save_users()
+            self.check_notifications()
+            for event in vk_longpoll.check():
+                self.handle_event(event)
+
+    def handle_event(self, event):
         d_state_function = {self.State.MENU_STATE: self.menu,
                             self.State.SETTINGS_STATE: self.settings,
                             self.State.NOTIFICATIONS_STATE: self.notifications,
                             self.State.LANGUAGES_STATE: self.languages,
                             self.State.GENRES_STATE: self.genres,
                             self.State.NEW_USER_STATE: self.new_user}
-        while True:
-            self.save_users()
-            self.check_notifications()
-            for event in vk_longpoll.check():
-                if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text and event.from_user:
-                    d_state_function[self.d_vk_state.get(event.user_id, self.State.NEW_USER_STATE)](event)
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text and event.from_user:
+            d_state_function[self.d_vk_state.get(event.user_id, self.State.NEW_USER_STATE)](event)
+
 
     def statistic_presenter(self, user_account_old, user_account_new):
         result = ""
@@ -228,7 +232,7 @@ class bot:
             self.navigate(event.user_id, self.State.SETTINGS_STATE)
 
         def retry():
-            self.navigate(event.user_id, self.State.SETTINGS_STATE)
+            self.navigate(event.user_id, self.State.MENU_STATE)
 
         def send_statistic():
             self.send_statistic(event.user_id)
